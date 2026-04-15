@@ -20,4 +20,10 @@ jobs:
           python-version: "3.12"
           cache: "pip"
 
+      - name: Install dependencides
+        run: pip install -r requirments.txt
+
+      - name: Run tests
+        run: pytest --tb=short -q
+
 # TODO: Install dependencies and run tests
