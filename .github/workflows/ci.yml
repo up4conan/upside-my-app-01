@@ -14,18 +14,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
         with:
+          version: "0.11.6"       # Pin uv version — update when bumping uv.lock
           python-version: "3.12"
-          cache: "pip"
+          enable-cache: true      # Cache uv's package cache across runs
 
-# TODO: Install dependencies and run tests
-      - name: Install dependencides
-        run: pip install -r requirements.txt
+      - name: Install dependencies
+        # --frozen: abort if uv.lock is out of sync (CI must not silently re-resolve)
+        run: uv sync --frozen
 
       - name: Run tests
-        run: pytest --tb=short -q
+        run: uv run pytest --tb=short -q
 
   docker-build:
     name: Docker Build
