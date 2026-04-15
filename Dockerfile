@@ -5,9 +5,6 @@ COPY --from=ghcr.io/astral-sh/uv:0.11.6 /uv /usr/local/bin/uv
 
 WORKDIR /app
 
-# Install into the system Python (no virtualenv needed inside a container)
-ENV UV_SYSTEM_PYTHON=1
-
 # Copy only dependency files first for Docker layer caching
 COPY pyproject.toml uv.lock ./
 
@@ -15,6 +12,9 @@ COPY pyproject.toml uv.lock ./
 # --no-dev: exclude dev dependencies (pytest, httpx, etc.)
 # --no-install-project: skip installing the project package itself
 RUN uv sync --frozen --no-dev --no-install-project
+
+# uv sync always creates .venv — add it to PATH so uvicorn is found at runtime
+ENV PATH="/app/.venv/bin:$PATH"
 
 COPY . .
 
