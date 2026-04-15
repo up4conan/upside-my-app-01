@@ -38,3 +38,13 @@ jobs:
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
 # TODO: Publish to GHCR
+  deploy:
+    name: Deploy (placeholder)
+    runs-on: ubuntu-latest
+    needs: build-and-push
+    environment: production
+
+    steps:
+      - name: Deploy to server
+        run: |
+          echo "Deploying image: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest"
