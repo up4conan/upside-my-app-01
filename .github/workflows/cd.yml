@@ -37,6 +37,23 @@ jobs:
             type=semver,pattern={{version}}
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        id: docker-build-push
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Attest
+        uses: actions/attest-build-provenance@v4
+        id: attest
+        with:
+          subject-name: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          subject-digest: ${{ steps.docker-build-push.outputs.digest }}
+          push-to-registry: true
+          
 # TODO: Publish to GHCR
   deploy:
     name: Deploy (placeholder)
